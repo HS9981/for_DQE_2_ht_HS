@@ -1,135 +1,182 @@
 import os
 from datetime import datetime
 import pandas as pd
-import fnmatch
-import shutil
+import re
 import time
-# import traceback
-import logging
+import sqlite_for_ht
+import file_direct
+import sqlite3
 
-path_dir = 'C:/Users/Hanna_Soika/Desktop/Python Module'
+fld_i = 'input'
+fld_ii = 'incorrect_input'
+path_dir = 'C:/Users/Hanna_Soika/Desktop/Python Module/'
 if not os.path.exists(path_dir):
     os.mkdir(path_dir)
     print(f'{path_dir}')
 
-fld_i = 'input'
-fld_ii = 'incorect_input'
-global before_df
-before_df = pd.DataFrame(columns=['filename', 'fileformat', 'status'])
-print ('before_df was created')
+wrf_tmp_df = pd.DataFrame(columns=['word', 'occurance'])
 
-analyz_df = pd.DataFrame(columns=['book_name', 'number_of_paragraph', 'number_of_words', 'number_of_letters',
-                                  'words_with_capital_letters', 'words_in_lowercase'])
-print ('analyz_df was created')
-
-class DirectoryChange:
-    """Class DirectoryChange create and monitor 'input' directory for given path for changes
-        create_dir - method to create directory
-     """
-    def __init__(self, path_dir, name_dir):
-        self.path_dir = path_dir
-        self.name_dir = name_dir
-
-    def create_dir(self):
-        folder = os.path.join(self.path_dir, self.name_dir)
-        if not os.path.exists(folder):
-            os.mkdir(folder)
-            print(f'{folder}')
-            msg = ' Created directory '
-            print(datetime.now(), msg, self.path_dir, "/", self.name_dir, sep='')
-
-
-class MonitorDir:
-    """Class MonitorDir  monitor 'input' directory for given path for changes
-        monitor_dir - method to monitor directory for files, create dataframe with list of the files
-
-     """
-    def __init__(self, path_dir, name_dir):
-        self.path_dir = path_dir
-        self.name_dir = name_dir
-
-    def monitor_dir(self):
-        global before_df
-        path_to_watch = os.path.join(self.path_dir, self.name_dir)
-
-        list_A = list(before_df['filename'].unique())
-        for file in os.listdir(path_to_watch):
-            if file not in list_A:
-                before_df = before_df.append({'filename': file}, ignore_index=True)
-                msg = 'Found file'
-                print(datetime.now(), msg, file)
-            # else:
-            #     print(file, 'againg')
-
-
-class FileToHandle:
-    """To define file formats, send to analyze only valid files"""
-    def __init__(self, filename):
-        self.filename = filename
-
-    def getformat(self):
-        global before_df
-        if fnmatch.fnmatch(self.filename, '*.fb2'):
-            print(datetime.now(), self.filename, 'has valid formate')
-            before_df.loc[(before_df.filename == self.filename), 'fileformat'] = 'fb2'
-        else:
-            before_df.loc[(before_df.filename == self.filename), 'fileformat'] = self.filename.split(".")[-1]
-            print(datetime.now(), self.filename, 'has invalid formate. To remove')
-
-
-class MoveFile:
-    """to move files with invalid format to different location"""
-    def __init__(self, filename):
-        self.filename = filename
-
-    def move_file_to(self):
-        global before_df
-        before_df = before_df[before_df.filename != self.filename]
-        shutil.move(f'{path_dir}/{fld_i}/{self.filename}', f'{path_dir}/{fld_ii}/{self.filename}')
-        print(datetime.now(), 'File', self.filename, 'was moved to', f'{path_dir}/{fld_ii}')
+qwerty = 0
 
 
 class AnalizeComFile:
     """Analixe given file, common table for all files"""
+
     def __init__(self, filename):
         self.filename = filename
+        self.path = f'{path_dir}{fld_i}'
 
-    def create_table(self):
-        print('TODO: create table in sqlite to store data if not exist')
+    def get_book_name(self):
+        file_to_read = f'{self.path}/{self.filename}'
+        file = open(file_to_read, 'r', encoding='utf-8')
+        string_to_match = 'book-title'
+        start = '>'
+        end = '</'
+        for line in file:
+            if string_to_match in line:
+                matched_line = line
+                matched_line = (matched_line[matched_line.find(start) + len(start):matched_line.rfind(end)])
+                sqlite_for_ht.CreateTable.insert_into(f_1, self.filename, matched_line)
+                break
+        print(datetime.now(), '-', 'book_name found for', self.filename, '=', matched_line)
 
-    def read_file(self):
-        global analyz_df
-        print('TODO: implement reading and analyzing file', self.filename)
+    def get_number_of_paragraph(self):
+        file_to_read = f'{self.path}/{self.filename}'
+        file = open(file_to_read, 'r', encoding='utf-8')
+        string_to_match = '<p>'
+        count = 0
+        for line in file:
+            if string_to_match in line:
+                count += 1
+        sqlite_for_ht.CreateTable.update_table(f_1, self.filename, 'number_of_paragraph', count)
+        print(datetime.now(), '-', 'number_of_paragraph for', self.filename, 'calculated =', count)
+
+    def get_number_of_words(self):
+        filename = f'{self.path}/{self.filename}'
+        word_counter = {}
+        w_cnt = 0
+        file = open(filename, 'r', encoding='utf-8')
+        data = file.read()
+        head, sep, tail = data.partition('<binary')
+        head = re.sub('\s\s*', ' ', (re.sub('\W|\d', ' ', re.sub('<.*?>', '', head))))
+        word_list = head.lower().split()
+        for word in word_list:
+            w_cnt += 1
+            if word not in word_counter:
+                word_counter[word] = 1
+            else:
+                word_counter[word] = word_counter[word] + 1
+        sqlite_for_ht.CreateTable.update_table(f_1, self.filename, 'number_of_words', w_cnt)
+        print(datetime.now(), '-', 'number_of_words for', self.filename, 'calculated =', w_cnt)
+
+    def get_number_of_letters(self):
+        filename = f'{self.path}/{self.filename}'
+        file = open(filename, 'r', encoding='utf-8')
+        """Count number of lettes without digits, non letter characters, without xml tags"""
+        data = file.read()
+        data = re.sub('<.*?binary.*?>*<.*?binary.*?>',' ', data)
+        data = re.sub('\s\s*', '', (re.sub('\W|\d', ' ', re.sub('<.*?>', '', data))))
+        let_count = len(data)
+        sqlite_for_ht.CreateTable.update_table(f_1, self.filename, 'number_of_letters', let_count)
+        print(datetime.now(), '-', 'number_of_letters for', self.filename, 'calculated =', let_count)
+
+    def get_number_of_words_with_capital_letters_and_lowercase(self):
+        filename = f'{self.path}/{self.filename}'
+        file = open(filename, 'r', encoding='utf-8')
+        data = file.read()
+        head, sep, tail = data.partition('<binary')
+        head = re.sub('\s\s*', ' ', (re.sub('\W|\d', ' ', re.sub('<.*?>', '', head))))
+        word_list = head.split()
+        upper_cnt = (sum([sum([c.isupper() for c in a]) for a in word_list]))
+        lower_cnt = (sum([sum([c.islower() for c in a]) for a in word_list]))
+        sqlite_for_ht.CreateTable.update_table(f_1, self.filename, 'words_with_capital_letters', upper_cnt)
+        sqlite_for_ht.CreateTable.update_table(f_1, self.filename, 'words_in_lowercase', lower_cnt)
+        print(datetime.now(), '-', 'words_with_capital_letters for', self.filename, 'calculated =', upper_cnt)
+        print(datetime.now(), '-', 'words_in_lowercase for', self.filename, 'calculated =', lower_cnt)
+
+    def get_analyze_per_file(self):
+        """Complete analyze for file by creating table """
+        filename = f'{self.path}/{self.filename}'
+        file = open(filename, 'r', encoding='utf-8')
+        df_tmp = pd.DataFrame(columns=['word', 'cnt', 'word_low'])
+        w_cnt = 0
+        word_counter = {}
+        data = file.read()
+        head, sep, tail = data.partition('<binary')
+        head = re.sub('\s\s*', ' ', (re.sub('\W|\d', ' ', re.sub('<.*?>', '', head))))
+        word_list = head.split()
+        for word in word_list:
+            w_cnt += 1
+            if word not in word_counter:
+                word_counter[word] = 1
+            else:
+                word_counter[word] = word_counter[word] + 1
+
+        for word, occurance in word_counter.items():
+            df_tmp = df_tmp.append({'word': '{:15}'.format(word), 'cnt': '{:3}'.format(occurance),
+                                    'word_low': '{:15}'.format(word).lower()}, ignore_index=True)
+        df_tmp = df_tmp.sort_values(by='word_low')
+        df_tmp.loc[(df_tmp.word != df_tmp.word_low), 'word'] = 1
+        df_tmp.loc[(df_tmp.word == df_tmp.word_low), 'word'] = 0
+        df_tmp['word'] = df_tmp.word.astype(int)
+        df_tmp['cnt'] = df_tmp.cnt.astype(int)
+        df_tmp = df_tmp.groupby(['word_low'])['cnt', 'word'].sum().reset_index()
+
+        # sqlite_for_ht.CreateTableSingle.create_table_per_file(f_3, self.filename)
+        # sqlite_for_ht.CreateTableSingle.insert_into(f_3, file, df_tmp.word_low, df_tmp.cnt, df_tmp.word)
+        conn = sqlite3.connect('for_python_ht.db')
+        df_tmp.to_sql(name=self.filename, con=conn, index=False)
+        print(datetime.now(), '-', 'word analyze for', self.filename, 'done =')
+        sqlite_for_ht.HandleTemp.update_table(self, 'status', 'Done', self.filename)
 
 
 if __name__ == '__main__':
-    while 1:
-        time.sleep(5)
-        g_ii = DirectoryChange(path_dir, fld_ii)
-        DirectoryChange.create_dir(g_ii)
+    g_ii = file_direct.DirectoryChange(path_dir, fld_ii)
+    file_direct.DirectoryChange.create_dir(g_ii)
 
-        guido = DirectoryChange(path_dir, fld_i)
-        DirectoryChange.create_dir(guido)
+    guido = file_direct.DirectoryChange(path_dir, fld_i)
+    file_direct.DirectoryChange.create_dir(guido)
 
-        guido_m = MonitorDir(path_dir, fld_i)
-        MonitorDir.monitor_dir(guido_m)
+    f_tmp = sqlite_for_ht.CreateDB()
+    sqlite_for_ht.CreateDB.create_common_table(f_tmp)
 
-        df_ls = before_df[before_df['fileformat'].isnull()]
-        ls_nn = list(df_ls['filename'].unique())
+    f_1 = sqlite_for_ht.CreateTable()
+
+    f_2 = sqlite_for_ht.HandleTemp()
+    sqlite_for_ht.HandleTemp.create_temp(f_2)
+
+    f_3 = sqlite_for_ht.CreateTableSingle()
+
+
+    while qwerty < 20:
+        qwerty +=1
+        print(' ')
+        print(datetime.now(), '-', 'NEW ITERATION OF TE WHOLE PROCESS', '=', qwerty, '+ 20 seconds')
+
+        guido_m = file_direct.MonitorDir(path_dir, fld_i)
+        file_direct.MonitorDir.monitor_dir(guido_m)
+
+        sqlite_for_ht.HandleTemp.get_exist_file(f_2)
+
+        ls_nn = list(sqlite_for_ht.HandleTemp.get_zero_format(f_2))
         for i in range(len(ls_nn)):
-            xx = FileToHandle(ls_nn[i])
-            FileToHandle.getformat(xx)
+            xx = file_direct.FileToHandle(ls_nn[i])
+            file_direct.FileToHandle.getformat(xx)
 
-        df_mv = before_df[before_df['fileformat'] != 'fb2']
-        ls_mv = list(df_mv['filename'].unique())
+        ls_mv = list(sqlite_for_ht.HandleTemp.get_file_to_move(f_2))
         for x in range(len(ls_mv)):
-            xx = MoveFile(ls_mv[x])
-            MoveFile.move_file_to(xx)
+            xx = file_direct.MoveFile(ls_mv[x])
+            file_direct.MoveFile.move_file_to(xx, path_dir, fld_i, fld_ii)
 
-        df_anlz = before_df[(before_df['fileformat'] == 'fb2') & (before_df['status'] != 'Done')]
-        ls_anlz = list(df_anlz['filename'].unique())
+        ls_anlz = list(sqlite_for_ht.HandleTemp.get_file_to_analize(f_2))
         for x in range(len(ls_anlz)):
             xx = AnalizeComFile(ls_anlz[x])
-            AnalizeComFile.read_file(xx)
+            AnalizeComFile.get_book_name(xx)
+            AnalizeComFile.get_number_of_paragraph(xx)
+            AnalizeComFile.get_number_of_words(xx)
+            AnalizeComFile.get_number_of_letters(xx)
+            AnalizeComFile.get_number_of_words_with_capital_letters_and_lowercase(xx)
+            AnalizeComFile.get_analyze_per_file(xx)
 
-        print(before_df)
+        time.sleep(20)
+
