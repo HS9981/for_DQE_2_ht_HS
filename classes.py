@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import datetime
 import pandas as pd
 import re
@@ -9,7 +10,8 @@ import sqlite_for_ht
 import file_direct
 
 fld_ii = 'incorrect_input'
-path_dir = 'C:/Users/Hanna_Soika/Desktop/Python Module/'
+# path_dir = 'C:/Users/Hanna_Soika/Desktop/Python Module/'
+path_dir = sys.argv
 
 if not os.path.exists(path_dir):
     os.mkdir(path_dir)
