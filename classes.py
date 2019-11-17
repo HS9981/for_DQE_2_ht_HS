@@ -10,8 +10,8 @@ import sqlite_for_ht
 import file_direct
 
 fld_ii = 'incorrect_input'
-# path_dir = 'C:/Users/Hanna_Soika/Desktop/Python Module/'
-path_dir = sys.argv
+path_dir = 'input_folder_for_ht/'
+# path_dir = str(sys.argv)
 
 if not os.path.exists(path_dir):
     os.mkdir(path_dir)
@@ -161,7 +161,7 @@ if __name__ == '__main__':
 
     f_3 = sqlite_for_ht.CreateTableSingle()
 
-    while qwerty < 20:
+    while qwerty < 3:
         qwerty +=1
         print(' ')
         print(datetime.now(), '-', 'NEW ITERATION OF ThE WHOLE PROCESS', '№', qwerty, '+ 20 seconds')
