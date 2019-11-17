@@ -10,9 +10,10 @@ import sqlite_for_ht
 import file_direct
 
 fld_ii = 'incorrect_input'
-# path_dir = 'input_folder_for_ht/'
+# path_dir = 'C:/Users/Hanna_Soika/Desktop/arg_test/'
 path_dir = str(sys.argv[1])
 print(str(sys.argv))
+print(path_dir, '-', 'path to monitor')
 
 if not os.path.exists(path_dir):
     os.mkdir(path_dir)
@@ -34,13 +35,15 @@ class AnalizeComFile:
         """Find book name, inside common_analyze_for_files tag"""
         file_to_read = f'{self.path}/{self.filename}'
         file = open(file_to_read, 'r', encoding='utf-8')
-        string_to_match = 'c'
+        string_to_match = 'book-title'
         start = '>'
         end = '</'
         for line in file:
             if string_to_match in line:
                 matched_line = line
+                # print(matched_line)
                 matched_line = (matched_line[matched_line.find(start) + len(start):matched_line.rfind(end)])
+                # print(matched_line)
                 sqlite_for_ht.CreateTable.insert_into(f_1, self.filename, matched_line)
                 print(datetime.now(), '-', 'book_name found for', self.filename, '=', matched_line)
                 break

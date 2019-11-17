@@ -60,18 +60,17 @@ class CreateTable:
         conn = sqlite3.connect('for_python_ht.db')
         c = conn.cursor()
         try:
-            print(datetime.now(), '-', self.column, int(self.value), self.file)
             c.execute("SELECT * FROM common_analyze_for_files")
             result = c.fetchall()
             my_list = []
             for row in result:
-                x = row[0]
+                x = row
                 my_list.append(x)
                 # print(my_list)
         except Exception:
             print(datetime.now(), '-', "Something went wrong")
             traceback.print_exc()
-        return my_list
+        return print(my_list)
 
 
 class CreateTableSingle:
