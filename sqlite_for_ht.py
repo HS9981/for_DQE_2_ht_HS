@@ -58,7 +58,17 @@ class CreateTable:
 
 
 class CreateTableSingle:
-    pass
+    def delete_table(self, filename):
+        self.filename = filename
+        conn = sqlite3.connect('for_python_ht.db')
+        c = conn.cursor()
+        try:
+            c.execute("DROP table '{}'".format(self.filename))
+            conn.commit()
+        except Exception:
+            print(datetime.now(), '-', "Something went wrong")
+            traceback.print_exc()
+        return None
 
 
 class HandleTemp:
@@ -119,7 +129,7 @@ class HandleTemp:
     def get_file_to_analize(self):
         conn = sqlite3.connect('for_python_ht.db')
         c = conn.cursor()
-        c.execute("SELECT file_name FROM before_diff WHERE fileformat ='fb2' and status is null ")
+        c.execute("""SELECT file_name FROM before_diff WHERE fileformat ='fb2' and status is null """)
         result = c.fetchall()
         my_list = []
         for row in result:
@@ -131,7 +141,7 @@ class HandleTemp:
         self.file = file
         conn = sqlite3.connect('for_python_ht.db')
         c = conn.cursor()
-        c.execute("INSERT INTO before_diff (file_name) VALUES ('"+self.file+"')")
+        c.execute("INSERT INTO before_diff (file_name) VALUES ('{}')".format(self.file))
         conn.commit()
         return None
 
@@ -157,9 +167,12 @@ class HandleTemp:
         conn = sqlite3.connect('for_python_ht.db')
         c = conn.cursor()
         try:
-            c.execute("DELETE from before_diff WHERE file_name ='"+self.file+"'")
+            c.execute("DELETE from before_diff WHERE file_name ='{}'".format(self.file))
+            # print(self.file)
             conn.commit()
         except:
             print(datetime.now(), '-', 'Something went wrong while deleting ')
+            print(datetime.now(), '-', "DELETE from before_diff WHERE file_name ='{}'".format(self.file))
+            # print(self.file)
             traceback.print_exc()
         return None
