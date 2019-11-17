@@ -198,5 +198,7 @@ if __name__ == '__main__':
             AnalizeComFile.get_number_of_words_with_capital_letters_and_lowercase(xx)
             AnalizeComFile.get_analyze_per_file(xx)
 
+        sqlite_for_ht.CreateTable.select_result(f_1)
+
         time.sleep(20)
 
