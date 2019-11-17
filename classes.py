@@ -10,8 +10,8 @@ import sqlite_for_ht
 import file_direct
 
 fld_ii = 'incorrect_input'
-# path_dir = 'C:/Users/Hanna_Soika/Desktop/arg_test/'
-path_dir = str(sys.argv[1])
+path_dir = 'C:/Users/Hanna_Soika/Desktop/arg_test/'
+# path_dir = str(sys.argv[1])
 print(str(sys.argv))
 print(path_dir, '-', 'path to monitor')
 
@@ -171,37 +171,37 @@ if __name__ == '__main__':
 
     f_3 = sqlite_for_ht.CreateTableSingle()
 
-    while qwerty < 3:
-        qwerty +=1
-        print(' ')
-        print(datetime.now(), '-', 'NEW ITERATION OF ThE WHOLE PROCESS', '№', qwerty, '+ 20 seconds')
+    # while qwerty < 1:
+    #     qwerty +=1
+    #     print(' ')
+    #     print(datetime.now(), '-', 'NEW ITERATION OF ThE WHOLE PROCESS', '№', qwerty, '+ 20 seconds')
 
-        guido_m = file_direct.MonitorDir(path_dir)
-        file_direct.MonitorDir.monitor_dir(guido_m)
+    guido_m = file_direct.MonitorDir(path_dir)
+    file_direct.MonitorDir.monitor_dir(guido_m)
 
-        sqlite_for_ht.HandleTemp.get_exist_file(f_2)
+    sqlite_for_ht.HandleTemp.get_exist_file(f_2)
 
-        ls_nn = list(sqlite_for_ht.HandleTemp.get_zero_format(f_2))
-        for i in range(len(ls_nn)):
-            xx = file_direct.FileToHandle(ls_nn[i])
-            file_direct.FileToHandle.getformat(xx)
+    ls_nn = list(sqlite_for_ht.HandleTemp.get_zero_format(f_2))
+    for i in range(len(ls_nn)):
+        xx = file_direct.FileToHandle(ls_nn[i])
+        file_direct.FileToHandle.getformat(xx)
 
-        ls_mv = list(sqlite_for_ht.HandleTemp.get_file_to_move(f_2))
-        for x in range(len(ls_mv)):
-            xx = file_direct.MoveFile(ls_mv[x])
-            file_direct.MoveFile.move_file_to(xx, path_dir, fld_ii)
+    ls_mv = list(sqlite_for_ht.HandleTemp.get_file_to_move(f_2))
+    for x in range(len(ls_mv)):
+        xx = file_direct.MoveFile(ls_mv[x])
+        file_direct.MoveFile.move_file_to(xx, path_dir, fld_ii)
 
-        ls_anlz = list(sqlite_for_ht.HandleTemp.get_file_to_analize(f_2))
-        for x in range(len(ls_anlz)):
-            xx = AnalizeComFile(ls_anlz[x])
-            AnalizeComFile.get_book_name(xx)
-            AnalizeComFile.get_number_of_paragraph(xx)
-            AnalizeComFile.get_number_of_words(xx)
-            AnalizeComFile.get_number_of_letters(xx)
-            AnalizeComFile.get_number_of_words_with_capital_letters_and_lowercase(xx)
-            AnalizeComFile.get_analyze_per_file(xx)
+    ls_anlz = list(sqlite_for_ht.HandleTemp.get_file_to_analize(f_2))
+    for x in range(len(ls_anlz)):
+        xx = AnalizeComFile(ls_anlz[x])
+        AnalizeComFile.get_book_name(xx)
+        AnalizeComFile.get_number_of_paragraph(xx)
+        AnalizeComFile.get_number_of_words(xx)
+        AnalizeComFile.get_number_of_letters(xx)
+        AnalizeComFile.get_number_of_words_with_capital_letters_and_lowercase(xx)
+        AnalizeComFile.get_analyze_per_file(xx)
 
-        sqlite_for_ht.CreateTable.select_result(f_1)
+    sqlite_for_ht.CreateTable.select_result(f_1)
 
-        time.sleep(20)
+        # time.sleep(20)
 
