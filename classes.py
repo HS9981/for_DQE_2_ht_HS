@@ -10,8 +10,9 @@ import sqlite_for_ht
 import file_direct
 
 fld_ii = 'incorrect_input'
-path_dir = 'input_folder_for_ht/'
-# path_dir = str(sys.argv)
+# path_dir = 'input_folder_for_ht/'
+path_dir = str(sys.argv[1])
+print(str(sys.argv))
 
 if not os.path.exists(path_dir):
     os.mkdir(path_dir)

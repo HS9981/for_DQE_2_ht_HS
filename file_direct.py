@@ -17,7 +17,7 @@ class DirectoryChange:
         folder = os.path.join(self.path_dir, self.name_dir)
         if not os.path.exists(folder):
             os.mkdir(folder)
-            return print(datetime.now(), 'Created directory', self.path_dir, self.name_dir, sep='')
+            return print(datetime.now(), 'Created directory', self.path_dir, self.name_dir)
 
 
 class MonitorDir:
