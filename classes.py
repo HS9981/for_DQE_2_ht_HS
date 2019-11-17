@@ -3,9 +3,10 @@ from datetime import datetime
 import pandas as pd
 import re
 import time
+import sqlite3
+import traceback
 import sqlite_for_ht
 import file_direct
-import sqlite3
 
 fld_i = 'input'
 fld_ii = 'incorrect_input'
@@ -15,7 +16,6 @@ if not os.path.exists(path_dir):
     print(f'{path_dir}')
 
 wrf_tmp_df = pd.DataFrame(columns=['word', 'occurance'])
-
 qwerty = 0
 
 
@@ -37,8 +37,9 @@ class AnalizeComFile:
                 matched_line = line
                 matched_line = (matched_line[matched_line.find(start) + len(start):matched_line.rfind(end)])
                 sqlite_for_ht.CreateTable.insert_into(f_1, self.filename, matched_line)
+                print(datetime.now(), '-', 'book_name found for', self.filename, '=', matched_line)
                 break
-        print(datetime.now(), '-', 'book_name found for', self.filename, '=', matched_line)
+        return None
 
     def get_number_of_paragraph(self):
         file_to_read = f'{self.path}/{self.filename}'
@@ -50,6 +51,7 @@ class AnalizeComFile:
                 count += 1
         sqlite_for_ht.CreateTable.update_table(f_1, self.filename, 'number_of_paragraph', count)
         print(datetime.now(), '-', 'number_of_paragraph for', self.filename, 'calculated =', count)
+        return None
 
     def get_number_of_words(self):
         filename = f'{self.path}/{self.filename}'
@@ -58,7 +60,7 @@ class AnalizeComFile:
         file = open(filename, 'r', encoding='utf-8')
         data = file.read()
         head, sep, tail = data.partition('<binary')
-        head = re.sub('\s\s*', ' ', (re.sub('\W|\d', ' ', re.sub('<.*?>', '', head))))
+        head = re.sub('\\s\\s*', ' ', (re.sub('\\W|\\d', ' ', re.sub('<.*?>', '', head))))
         word_list = head.lower().split()
         for word in word_list:
             w_cnt += 1
@@ -68,6 +70,7 @@ class AnalizeComFile:
                 word_counter[word] = word_counter[word] + 1
         sqlite_for_ht.CreateTable.update_table(f_1, self.filename, 'number_of_words', w_cnt)
         print(datetime.now(), '-', 'number_of_words for', self.filename, 'calculated =', w_cnt)
+        return None
 
     def get_number_of_letters(self):
         filename = f'{self.path}/{self.filename}'
@@ -75,17 +78,18 @@ class AnalizeComFile:
         """Count number of lettes without digits, non letter characters, without xml tags"""
         data = file.read()
         data = re.sub('<.*?binary.*?>*<.*?binary.*?>',' ', data)
-        data = re.sub('\s\s*', '', (re.sub('\W|\d', ' ', re.sub('<.*?>', '', data))))
+        data = re.sub('\\s\\s*', '', (re.sub('\\W|\\d', ' ', re.sub('<.*?>', '', data))))
         let_count = len(data)
         sqlite_for_ht.CreateTable.update_table(f_1, self.filename, 'number_of_letters', let_count)
         print(datetime.now(), '-', 'number_of_letters for', self.filename, 'calculated =', let_count)
+        return None
 
     def get_number_of_words_with_capital_letters_and_lowercase(self):
         filename = f'{self.path}/{self.filename}'
         file = open(filename, 'r', encoding='utf-8')
         data = file.read()
         head, sep, tail = data.partition('<binary')
-        head = re.sub('\s\s*', ' ', (re.sub('\W|\d', ' ', re.sub('<.*?>', '', head))))
+        head = re.sub('\\s\\s*', ' ', (re.sub('\\W|\\d', ' ', re.sub('<.*?>', '', head))))
         word_list = head.split()
         upper_cnt = (sum([sum([c.isupper() for c in a]) for a in word_list]))
         lower_cnt = (sum([sum([c.islower() for c in a]) for a in word_list]))
@@ -93,6 +97,7 @@ class AnalizeComFile:
         sqlite_for_ht.CreateTable.update_table(f_1, self.filename, 'words_in_lowercase', lower_cnt)
         print(datetime.now(), '-', 'words_with_capital_letters for', self.filename, 'calculated =', upper_cnt)
         print(datetime.now(), '-', 'words_in_lowercase for', self.filename, 'calculated =', lower_cnt)
+        return None
 
     def get_analyze_per_file(self):
         """Complete analyze for file by creating table """
@@ -121,13 +126,15 @@ class AnalizeComFile:
         df_tmp['word'] = df_tmp.word.astype(int)
         df_tmp['cnt'] = df_tmp.cnt.astype(int)
         df_tmp = df_tmp.groupby(['word_low'])['cnt', 'word'].sum().reset_index()
-
-        # sqlite_for_ht.CreateTableSingle.create_table_per_file(f_3, self.filename)
-        # sqlite_for_ht.CreateTableSingle.insert_into(f_3, file, df_tmp.word_low, df_tmp.cnt, df_tmp.word)
         conn = sqlite3.connect('for_python_ht.db')
-        df_tmp.to_sql(name=self.filename, con=conn, index=False)
-        print(datetime.now(), '-', 'word analyze for', self.filename, 'done =')
-        sqlite_for_ht.HandleTemp.update_table(self, 'status', 'Done', self.filename)
+        try:
+            df_tmp.to_sql(name=self.filename, con=conn, index=False)
+        except Exception:
+            print('file with name {} already exists'.format(self.filename))
+            traceback.print_exc()
+        print(datetime.now(), '-', 'word analyse for', self.filename, 'done')
+        sqlite_for_ht.HandleTemp.update_table(f_2, 'status', 'Done', self.filename)
+        return None
 
 
 if __name__ == '__main__':
@@ -146,8 +153,6 @@ if __name__ == '__main__':
     sqlite_for_ht.HandleTemp.create_temp(f_2)
 
     f_3 = sqlite_for_ht.CreateTableSingle()
-
-
     while qwerty < 20:
         qwerty +=1
         print(' ')
