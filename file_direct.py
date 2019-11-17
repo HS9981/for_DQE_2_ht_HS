@@ -6,8 +6,8 @@ import shutil
 
 
 class DirectoryChange:
-    """Class DirectoryChange create and monitor 'input' directory for given path for changes
-        create_dir - method to create directory
+    """Class DirectoryChange monitor 'input' directory for given path for changes
+        create_dir - method to create directory (incorrect_input)
      """
     def __init__(self, path_dir, name_dir):
         self.path_dir = path_dir
@@ -66,7 +66,7 @@ class FileToHandle:
 
 
 class MoveFile:
-    """to move files with invalid format to different location"""
+    """To move files with invalid format to different location"""
     def __init__(self, filename):
         self.filename = filename
 

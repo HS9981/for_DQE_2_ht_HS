@@ -23,7 +23,7 @@ qwerty = 0
 
 
 class AnalizeComFile:
-    """Analixe given file, common table for all files"""
+    """Analixe given file"""
 
     def __init__(self, filename):
         self.filename = filename
@@ -31,9 +31,10 @@ class AnalizeComFile:
         # self.path = f'{path_dir}{fld_i}'
 
     def get_book_name(self):
+        """Find book name, inside common_analyze_for_files tag"""
         file_to_read = f'{self.path}/{self.filename}'
         file = open(file_to_read, 'r', encoding='utf-8')
-        string_to_match = 'book-title'
+        string_to_match = 'c'
         start = '>'
         end = '</'
         for line in file:
@@ -46,6 +47,7 @@ class AnalizeComFile:
         return None
 
     def get_number_of_paragraph(self):
+        """Get number of paragraphs by counting lies starting with <p>"""
         file_to_read = f'{self.path}/{self.filename}'
         file = open(file_to_read, 'r', encoding='utf-8')
         string_to_match = '<p>'
@@ -58,6 +60,7 @@ class AnalizeComFile:
         return None
 
     def get_number_of_words(self):
+        """Exclude tags, exclude binary (img), count words without non literal characters and digits"""
         filename = f'{self.path}/{self.filename}'
         word_counter = {}
         w_cnt = 0
@@ -77,6 +80,7 @@ class AnalizeComFile:
         return None
 
     def get_number_of_letters(self):
+        """Exclude tags, exclude binary (img), count words without non literal characters and digits"""
         filename = f'{self.path}/{self.filename}'
         file = open(filename, 'r', encoding='utf-8')
         """Count number of lettes without digits, non letter characters, without xml tags"""
@@ -89,6 +93,7 @@ class AnalizeComFile:
         return None
 
     def get_number_of_words_with_capital_letters_and_lowercase(self):
+        """Exclude tags, exclude binary (img), count words without non literal characters and digits"""
         filename = f'{self.path}/{self.filename}'
         file = open(filename, 'r', encoding='utf-8')
         data = file.read()
@@ -105,6 +110,7 @@ class AnalizeComFile:
 
     def get_analyze_per_file(self):
         """Complete analyze for file by creating table """
+        """Exclude tags, exclude binary (img), count words without non literal characters and digits"""
         filename = f'{self.path}/{self.filename}'
         file = open(filename, 'r', encoding='utf-8')
         df_tmp = pd.DataFrame(columns=['word', 'cnt', 'word_low'])

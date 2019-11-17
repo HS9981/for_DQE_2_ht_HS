@@ -4,8 +4,8 @@ import traceback
 
 
 class CreateDB:
+    """Create common table(common_analyze_for_files) to store results of the analise for oall files"""
     def create_common_table(self):
-
         conn = sqlite3.connect('for_python_ht.db')
         c = conn.cursor()
         try:
@@ -31,7 +31,7 @@ class CreateDB:
 
 
 class CreateTable:
-
+    """Insert and update data in the common_analyze_for_files for file in process of the analise"""
     def insert_into(self, file, title):
         self.file = file
         self.title = title
@@ -58,6 +58,7 @@ class CreateTable:
 
 
 class CreateTableSingle:
+    """Delete single file results from previous run (filename)"""
     def delete_table(self, filename):
         self.filename = filename
         conn = sqlite3.connect('for_python_ht.db')
@@ -72,6 +73,7 @@ class CreateTableSingle:
 
 
 class HandleTemp:
+    """Management of the temp resylts"""
     def create_temp(self):
         conn = sqlite3.connect('for_python_ht.db')
         c = conn.cursor()
