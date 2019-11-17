@@ -10,8 +10,8 @@ import sqlite_for_ht
 import file_direct
 
 fld_ii = 'incorrect_input'
-path_dir = 'C:/Users/Hanna_Soika/Desktop/arg_test/'
-# path_dir = str(sys.argv[1])
+# path_dir = 'C:/Users/Hanna_Soika/Desktop/arg_test/'
+path_dir = str(sys.argv[1])
 print(str(sys.argv))
 print(path_dir, '-', 'path to monitor')
 
