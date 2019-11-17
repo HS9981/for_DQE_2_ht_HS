@@ -5,6 +5,7 @@ import traceback
 
 class CreateDB:
     def create_common_table(self):
+
         conn = sqlite3.connect('for_python_ht.db')
         c = conn.cursor()
         try:
@@ -30,18 +31,6 @@ class CreateDB:
 
 
 class CreateTable:
-    # def create_table_per_file(self, filename):
-    #     self.filename = filename
-    #     conn = sqlite3.connect('for_python_ht.db')
-    #     c = conn.cursor()
-    #     c.execute("""CREATE TABLE IF NOT EXISTS [""" + self.filename + """] (
-    #         word text,
-    #         count integer,
-    #         upper_count integer
-    #         )
-    #         """)
-    #     return print(datetime.now(), '-', 'Created', self.filename, 'table in sqlite', sep=' ')
-    #     conn.commit()
 
     def insert_into(self, file, title):
         self.file = file
@@ -69,44 +58,7 @@ class CreateTable:
 
 
 class CreateTableSingle:
-    # def create_table_per_file(self, filename):
-    #     self.filename = filename
-    #     conn = sqlite3.connect('for_python_ht.db')
-    #     c = conn.cursor()
-    #     c.execute("""CREATE TABLE IF NOT EXISTS [""" + self.filename + """] (
-    #         word text,
-    #         count integer,
-    #         upper_count integer
-    #         )
-    #         """)
-    #     return print(datetime.now(), '-', 'Created', self.filename, 'table in sqlite', sep=' ')
-    #     conn.commit()
-
-    # def insert_into(self, file, word, count, cnt_up):
-    #     self.file = file
-    #     self.word = word
-    #     self.count = count
-    #     self.cnt_up = cnt_up
-    #     conn = sqlite3.connect('for_python_ht.db')
-    #     c = conn.cursor()
-    #     c.execute("INSERT INTO {} (word, count, upper_count) VALUES ('{}','{}','{})".format(self.file, self.word, self.count, self.cnt_up))
-    #     conn.commit()
-    #     return None
-
-
-    def insert_into(self, file, word, count, cnt_up):
-        self.file = file
-        self.word = word
-        self.count = count
-        self.cnt_up = cnt_up
-        conn = sqlite3.connect('for_python_ht.db')
-        c = conn.cursor()
-        c.execute("INSERT INTO {} (word, count, upper_count) VALUES ('{}','{}','{})".format(self.file, self.word, self.count, self.cnt_up))
-        conn.commit()
-        return None
-    # df_tmp.to_sql(name='df_tmp', con=conn)
-
-
+    pass
 
 
 class HandleTemp:
@@ -138,7 +90,7 @@ class HandleTemp:
         for row in result:
             x = row[0]
             my_list.append(x)
-            print(my_list)
+            # print(my_list)
         return my_list
 
 

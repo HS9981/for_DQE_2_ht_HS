@@ -32,7 +32,6 @@ class MonitorDir:
         path_to_watch = os.path.join(self.path_dir, self.name_dir)
         try:
             list_a = list(sqlite_for_ht.HandleTemp.get_exist_file(self))
-            # print(list_a)
         except:
             print(datetime.now(), '-', 'Monitoring started')
             list_a = list()
