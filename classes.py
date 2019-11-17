@@ -8,9 +8,9 @@ import traceback
 import sqlite_for_ht
 import file_direct
 
-fld_i = 'input'
 fld_ii = 'incorrect_input'
 path_dir = 'C:/Users/Hanna_Soika/Desktop/Python Module/'
+
 if not os.path.exists(path_dir):
     os.mkdir(path_dir)
     print(f'{path_dir}')
@@ -24,7 +24,8 @@ class AnalizeComFile:
 
     def __init__(self, filename):
         self.filename = filename
-        self.path = f'{path_dir}{fld_i}'
+        self.path = f'{path_dir}'
+        # self.path = f'{path_dir}{fld_i}'
 
     def get_book_name(self):
         file_to_read = f'{self.path}/{self.filename}'
@@ -128,9 +129,16 @@ class AnalizeComFile:
         df_tmp = df_tmp.groupby(['word_low'])['cnt', 'word'].sum().reset_index()
         conn = sqlite3.connect('for_python_ht.db')
         try:
+            try:
+                sqlite_for_ht.CreateTableSingle.delete_table(f_3, self.filename)
+                print(datetime.now(), '-', self.filename, 'Table deleted at the start point')
+            except Exception:
+                print(datetime.now(), '-', 'Something went wrong')
+                traceback.print_exc()
             df_tmp.to_sql(name=self.filename, con=conn, index=False)
+            print(datetime.now(), '-', self.filename, 'Table created and filled with data')
         except Exception:
-            print('file with name {} already exists'.format(self.filename))
+            print(datetime.now(), '-', 'file with name {} already exists'.format(self.filename))
             traceback.print_exc()
         print(datetime.now(), '-', 'word analyse for', self.filename, 'done')
         sqlite_for_ht.HandleTemp.update_table(f_2, 'status', 'Done', self.filename)
@@ -139,10 +147,7 @@ class AnalizeComFile:
 
 if __name__ == '__main__':
     g_ii = file_direct.DirectoryChange(path_dir, fld_ii)
-    file_direct.DirectoryChange.create_dir(g_ii)
-
-    guido = file_direct.DirectoryChange(path_dir, fld_i)
-    file_direct.DirectoryChange.create_dir(guido)
+    file_direct.DirectoryChange.create_dir(g_ii) # create folder incorect input
 
     f_tmp = sqlite_for_ht.CreateDB()
     sqlite_for_ht.CreateDB.create_common_table(f_tmp)
@@ -153,12 +158,13 @@ if __name__ == '__main__':
     sqlite_for_ht.HandleTemp.create_temp(f_2)
 
     f_3 = sqlite_for_ht.CreateTableSingle()
+
     while qwerty < 20:
         qwerty +=1
         print(' ')
-        print(datetime.now(), '-', 'NEW ITERATION OF TE WHOLE PROCESS', '=', qwerty, '+ 20 seconds')
+        print(datetime.now(), '-', 'NEW ITERATION OF ThE WHOLE PROCESS', '№', qwerty, '+ 20 seconds')
 
-        guido_m = file_direct.MonitorDir(path_dir, fld_i)
+        guido_m = file_direct.MonitorDir(path_dir)
         file_direct.MonitorDir.monitor_dir(guido_m)
 
         sqlite_for_ht.HandleTemp.get_exist_file(f_2)
@@ -171,7 +177,7 @@ if __name__ == '__main__':
         ls_mv = list(sqlite_for_ht.HandleTemp.get_file_to_move(f_2))
         for x in range(len(ls_mv)):
             xx = file_direct.MoveFile(ls_mv[x])
-            file_direct.MoveFile.move_file_to(xx, path_dir, fld_i, fld_ii)
+            file_direct.MoveFile.move_file_to(xx, path_dir, fld_ii)
 
         ls_anlz = list(sqlite_for_ht.HandleTemp.get_file_to_analize(f_2))
         for x in range(len(ls_anlz)):

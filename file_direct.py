@@ -24,21 +24,31 @@ class MonitorDir:
     """Class MonitorDir  monitor 'input' directory for given path for changes
         monitor_dir - method to monitor directory for files, create dataframe with list of the files
      """
-    def __init__(self, path_dir, name_dir):
+    def __init__(self, path_dir):
         self.path_dir = path_dir
-        self.name_dir = name_dir
 
     def monitor_dir(self):
-        path_to_watch = os.path.join(self.path_dir, self.name_dir)
+        # print(self.path_dir)
+        path_to_watch = os.path.join(self.path_dir)
         try:
             list_a = list(sqlite_for_ht.HandleTemp.get_exist_file(self))
         except:
             print(datetime.now(), '-', 'Monitoring started')
             list_a = list()
         for file in os.listdir(path_to_watch):
-            if file not in list_a:
-                sqlite_for_ht.HandleTemp.insert_into(self, file)
-                return print(datetime.now(), '-', 'Found file', file)
+            # print(path_to_watch, file)
+            if os.path.isfile(f'{path_to_watch}{file}'):
+                # print(f'{path_to_watch}{file}')
+                # print(file, os.path.isfile(f'{path_to_watch}{file}'))
+                if file not in list_a:
+                    sqlite_for_ht.HandleTemp.insert_into(self, file)
+                    print(datetime.now(), '-', 'Found file', file)
+            else:
+                # print('else', file)
+                # print(os.path.isfile(file))
+                print(datetime.now(), '-', file, '-', 'This is directiry. Ignore.')
+        return file
+
 
 
 class FileToHandle:
@@ -60,11 +70,10 @@ class MoveFile:
     def __init__(self, filename):
         self.filename = filename
 
-    def move_file_to(self, path_dir, fld_i, fld_ii):
+    def move_file_to(self, path_dir, fld_ii):
         self.path_dir = path_dir
-        self.fld_i = fld_i
         self.fld_ii = fld_ii
-        shutil.move(f'{self.path_dir}{self.fld_i}/{self.filename}', f'{self.path_dir}{self.fld_ii}/{self.filename}')
+        shutil.move(f'{self.path_dir}/{self.filename}', f'{self.path_dir}{self.fld_ii}/{self.filename}')
         print(datetime.now(), '-', 'File', self.filename, 'was moved to', f'{self.path_dir}{self.fld_ii}')
         sqlite_for_ht.HandleTemp.delete_row(self, self.filename)
 
