@@ -11,11 +11,6 @@
 			"expected": 1
 		},
 			{
-			"name": "3. Check table ___ for existing data",
-			"query": "SELECT ''book_name'' FROM common_analyze_for_files",
-			"expected": "''Цветы для Элджернона''"
-		},
-			{
 			"name": "4. Check table ___ for existing data",
 			"query": "SELECT number_of_paragraph FROM common_analyze_for_files",
 			"expected": 2267

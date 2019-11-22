@@ -10,7 +10,6 @@ class TestFlow:
     def run_test(self):
         test_files = self.check_test_folder()
 
-        # print(test_files)
         for f in test_files:
             self.do_tests(f)
 

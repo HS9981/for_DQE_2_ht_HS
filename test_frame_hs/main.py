@@ -23,7 +23,7 @@ def run():
 
     test.run_test()
 
-    # logger.finish()
+    logger.finish()
 
 
 if __name__ == '__main__':
