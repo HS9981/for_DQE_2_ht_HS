@@ -24,6 +24,10 @@ class Outcome:
         msg = str(datetime.now()) + ' - ' + 'FAILED.  Actual result is {} when expected is {}. Query: {}\r'.format(actual_result, expected_result, query)
         self.log_file.write(msg)
 
+    def read(self):
+        self.log_file = open('logging/outcome.log', 'r')
+        print(self.log_file.read())
+
     def finish(self):
         self.log_file.close()
 

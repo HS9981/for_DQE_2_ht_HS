@@ -20,6 +20,8 @@ def run():
 
     test.run_test()
 
+    logger.read()
+
     logger.finish()
 
 
