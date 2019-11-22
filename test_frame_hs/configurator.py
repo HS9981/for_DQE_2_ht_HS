@@ -4,7 +4,7 @@ import os
 class Config:
     def __init__(self, env):
         print(os.getcwd())
-        with open('../config.json') as f:
+        with open('/test_frame_hs/config.json') as f:
             print(os.getcwd())
             self.config = eval(f.read())
             print(os.getcwd())
