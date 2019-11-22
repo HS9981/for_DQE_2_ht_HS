@@ -1,9 +1,12 @@
 from datetime import datetime
+import os
 
 
 class Outcome:
     def __init__(self):
-        self.log_file = open('logging/outcome.log', 'w')
+        print(os.getcwd())
+        self.log_file = open('/logging/outcome.log', 'w')
+        print(os.getcwd())
 
     def start_test(self, file_name):
         msg = str(datetime.now()) + ' - ' + 'Testing of the {} started\r'.format(file_name)
