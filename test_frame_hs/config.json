@@ -1,6 +1,6 @@
 {
 	"dev":{
 		"database":"/Users/Hanna_Soika/ProgrammData/Jenkins/workspace/Run_ht_hs/for_python_ht.db",
-		"test_data":"/Users/Hanna_Soika/ProgrammData/Jenkins/workspace"
+		"test_data":"/Users/Hanna_Soika/ProgrammData/Jenkins/workspace/Clone_git/test_frame_hs/test_data/"
 	}
 }
