@@ -11,32 +11,32 @@
 			"expected": 1
 		},
 			{
-			"name": "4. Check table ___ for existing data",
+			"name": "3. Check table ___ for existing data",
 			"query": "SELECT number_of_paragraph FROM common_analyze_for_files",
 			"expected": 2267
 		},
 			{
-			"name": "5. Check table ___ for existing data",
+			"name": "4. Check table ___ for existing data",
 			"query": "SELECT number_of_words FROM common_analyze_for_files",
 			"expected": 63961
 		},
 			{
-			"name": "6. Check table ___ for existing data",
+			"name": "5. Check table ___ for existing data",
 			"query": "SELECT number_of_letters FROM common_analyze_for_files",
 			"expected": 371913
 		},
 			{
-			"name": "7. Check table ___ for existing data",
+			"name": "6. Check table ___ for existing data",
 			"query": "SELECT words_with_capital_letters FROM common_analyze_for_files",
 			"expected": 8515
 		},
 			{
-			"name": "8. Check table ___ for existing data",
+			"name": "7. Check table ___ for existing data",
 			"query": "SELECT words_in_lowercase FROM common_analyze_for_files",
 			"expected": 55446
 		},
 			{
-			"name": "9. Check table ___ for existing data",
+			"name": "8. Check table ___ for existing data",
 			"query": "SELECT words_in_lowercase + words_with_capital_letters FROM common_analyze_for_files",
 			"expected": 63961
 		}

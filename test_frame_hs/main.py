@@ -1,12 +1,9 @@
 from sys import argv
 from configurator import Config
-from datetime import datetime
 from connector import Connector
 from outcome import Outcome
 from test_flow import TestFlow
 
-print(datetime.now())
-# print(Config(argv[1]))
 
 def run():
     config = Config(argv[1])

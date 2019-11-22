@@ -5,7 +5,7 @@ import os
 class Outcome:
     def __init__(self):
         print(os.getcwd())
-        self.log_file = open('/logging/outcome.log', 'w')
+        self.log_file = open('logging/outcome.log', 'w')
         print(os.getcwd())
 
     def start_test(self, file_name):
