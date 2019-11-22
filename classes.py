@@ -65,19 +65,26 @@ class AnalizeComFile:
     def get_number_of_words(self):
         """Exclude tags, exclude binary (img), count words without non literal characters and digits"""
         filename = f'{self.path}/{self.filename}'
-        word_counter = {}
-        w_cnt = 0
+        # word_counter = {}
+        # w_cnt = 0
+        # x = 0
         file = open(filename, 'r', encoding='utf-8')
         data = file.read()
         head, sep, tail = data.partition('<binary')
         head = re.sub('\\s\\s*', ' ', (re.sub('\\W|\\d', ' ', re.sub('<.*?>', '', head))))
-        word_list = head.lower().split()
-        for word in word_list:
-            w_cnt += 1
-            if word not in word_counter:
-                word_counter[word] = 1
-            else:
-                word_counter[word] = word_counter[word] + 1
+        word_list = head.split()
+        # for word in word_list:
+        #     w_cnt += 1
+        #     if word not in word_counter:
+        #         word_counter[word] = 1
+        #     else:
+        #         word_counter[word] = word_counter[word] + 1
+
+        # for word in word_list:
+        #     x += 1
+        #     print(word, word.isalpha(), x)
+
+        w_cnt = sum([a[0].isalpha() for a in word_list])
         sqlite_for_ht.CreateTable.update_table(f_1, self.filename, 'number_of_words', w_cnt)
         print(datetime.now(), '-', 'number_of_words for', self.filename, 'calculated =', w_cnt)
         return None
@@ -103,8 +110,13 @@ class AnalizeComFile:
         head, sep, tail = data.partition('<binary')
         head = re.sub('\\s\\s*', ' ', (re.sub('\\W|\\d', ' ', re.sub('<.*?>', '', head))))
         word_list = head.split()
-        upper_cnt = (sum([sum([c.isupper() for c in a]) for a in word_list]))
-        lower_cnt = (sum([sum([c.islower() for c in a]) for a in word_list]))
+
+        # upper_cnt = (sum([sum([c.isupper() for c in a]) for a in word_list]))
+        # lower_cnt = (sum([sum([c.islower() for c in a]) for a in word_list]))
+
+        upper_cnt = sum([a[0].isupper() for a in word_list])
+        lower_cnt = (sum([a.islower() for a in word_list]))
+
         sqlite_for_ht.CreateTable.update_table(f_1, self.filename, 'words_with_capital_letters', upper_cnt)
         sqlite_for_ht.CreateTable.update_table(f_1, self.filename, 'words_in_lowercase', lower_cnt)
         print(datetime.now(), '-', 'words_with_capital_letters for', self.filename, 'calculated =', upper_cnt)
@@ -121,20 +133,22 @@ class AnalizeComFile:
         word_counter = {}
         data = file.read()
         head, sep, tail = data.partition('<binary')
-        head = re.sub('\s\s*', ' ', (re.sub('\W|\d', ' ', re.sub('<.*?>', '', head))))
+        head = re.sub('\\s\\s*', ' ', (re.sub('\\W|\\d', ' ', re.sub('<.*?>', '', head))))
         word_list = head.split()
         for word in word_list:
-            w_cnt += 1
+
             if word not in word_counter:
                 word_counter[word] = 1
             else:
                 word_counter[word] = word_counter[word] + 1
+            w_cnt += 1
 
         for word, occurance in word_counter.items():
             df_tmp = df_tmp.append({'word': '{:15}'.format(word), 'cnt': '{:3}'.format(occurance),
                                     'word_low': '{:15}'.format(word).lower()}, ignore_index=True)
         df_tmp = df_tmp.sort_values(by='word_low')
-        df_tmp.loc[(df_tmp.word != df_tmp.word_low), 'word'] = 1
+        df_tmp.loc[(df_tmp.word != df_tmp.word_low), 'word'] = df_tmp.cnt
+        df_tmp.loc[(df_tmp.word == df_tmp.cnt), 'cnt'] = 0
         df_tmp.loc[(df_tmp.word == df_tmp.word_low), 'word'] = 0
         df_tmp['word'] = df_tmp.word.astype(int)
         df_tmp['cnt'] = df_tmp.cnt.astype(int)
