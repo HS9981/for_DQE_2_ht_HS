@@ -12,8 +12,8 @@
 		},
 			{
 			"name": "3. Check table ___ for existing data",
-			"query": "SELECT book_name FROM common_analyze_for_files",
-			"expected": "Цветы для Элджернона"
+			"query": "SELECT ''book_name'' FROM common_analyze_for_files",
+			"expected": "''Цветы для Элджернона''"
 		},
 			{
 			"name": "4. Check table ___ for existing data",
